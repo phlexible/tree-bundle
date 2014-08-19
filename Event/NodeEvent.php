@@ -8,25 +8,25 @@
 
 namespace Phlexible\Bundle\TreeBundle\Event;
 
-use Phlexible\Bundle\TreeBundle\Tree\Node\TreeNode;
+use Phlexible\Bundle\TreeBundle\Tree\Node\TreeNodeInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Abstract node event
+ * Node event
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
-abstract class AbstractNodeEvent extends Event
+class NodeEvent extends Event
 {
     /**
-     * @var TreeNode
+     * @var TreeNodeInterface
      */
-    protected $node = null;
+    private $node;
 
     /**
-     * @param TreeNode $node
+     * @param TreeNodeInterface $node
      */
-    public function __construct(TreeNode $node)
+    public function __construct(TreeNodeInterface $node)
     {
         $this->node = $node;
     }
@@ -34,7 +34,7 @@ abstract class AbstractNodeEvent extends Event
     /**
      * Return node
      *
-     * @return TreeNode
+     * @return TreeNodeInterface
      */
     public function getNode()
     {
