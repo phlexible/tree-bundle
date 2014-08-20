@@ -6,10 +6,9 @@
  * @license   proprietary
  */
 
-namespace Phlexible\Bundle\TreeBundle\Tree;
+namespace Phlexible\Bundle\TreeBundle\Model;
 
 use Phlexible\Bundle\TreeBundle\Exception\InvalidNodeMoveException;
-use Phlexible\Bundle\TreeBundle\Tree\Node\TreeNodeInterface;
 
 /**
  * Writable tree interface

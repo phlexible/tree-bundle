@@ -6,9 +6,7 @@
  * @license   proprietary
  */
 
-namespace Phlexible\Bundle\TreeBundle\Tree\Node;
-
-use Phlexible\Bundle\TreeBundle\Tree\TreeInterface;
+namespace Phlexible\Bundle\TreeBundle\Model;
 
 /**
  * Tree node interface

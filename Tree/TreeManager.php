@@ -6,13 +6,13 @@
  * @license   proprietary
  */
 
-namespace Phlexible\Bundle\TreeBundle;
+namespace Phlexible\Bundle\TreeBundle\Tree;
 
 use Phlexible\Bundle\SiterootBundle\Model\SiterootManagerInterface;
 use Phlexible\Bundle\TreeBundle\Exception\NodeNotFoundException;
-use Phlexible\Bundle\TreeBundle\Tree\TreeFactoryInterface;
-use Phlexible\Bundle\TreeBundle\Tree\TreeInterface;
-use Phlexible\Bundle\TreeBundle\Tree\WritableTreeInterface;
+use Phlexible\Bundle\TreeBundle\Model\TreeFactoryInterface;
+use Phlexible\Bundle\TreeBundle\Model\TreeInterface;
+use Phlexible\Bundle\TreeBundle\Model\WritableTreeInterface;
 
 /**
  * Tree manager
@@ -22,7 +22,7 @@ use Phlexible\Bundle\TreeBundle\Tree\WritableTreeInterface;
 class TreeManager
 {
     /**
-     * @var TreeInterface[]
+     * @var \Phlexible\Bundle\TreeBundle\Model\TreeInterface[]
      */
     private $trees = array();
 
@@ -32,13 +32,13 @@ class TreeManager
     private $siterootManager;
 
     /**
-     * @var TreeFactoryInterface
+     * @var \Phlexible\Bundle\TreeBundle\Model\TreeFactoryInterface
      */
     private $treeFactory;
 
     /**
      * @param SiterootManagerInterface $siterootManager
-     * @param TreeFactoryInterface     $treeFactory
+     * @param \Phlexible\Bundle\TreeBundle\Model\TreeFactoryInterface     $treeFactory
      */
     public function __construct(SiterootManagerInterface $siterootManager, TreeFactoryInterface $treeFactory)
     {
@@ -51,7 +51,7 @@ class TreeManager
      *
      * @param string $siteRootId
      *
-     * @return TreeInterface|WritableTreeInterface
+     * @return \Phlexible\Bundle\TreeBundle\Model\TreeInterface|WritableTreeInterface
      */
     public function getBySiteRootId($siteRootId)
     {
@@ -68,7 +68,7 @@ class TreeManager
      *
      * @param int $nodeId
      *
-     * @return TreeInterface|WritableTreeInterface
+     * @return \Phlexible\Bundle\TreeBundle\Model\TreeInterface|\Phlexible\Bundle\TreeBundle\Model\WritableTreeInterface
      * @throws NodeNotFoundException
      */
     public function getByNodeId($nodeId)
@@ -81,6 +81,6 @@ class TreeManager
             }
         }
 
-        throw new NodeNotFoundException('Tree for node  "' . $nodeId . '" not found.');
+        throw new NodeNotFoundException("Tree for node $nodeId not found.");
     }
 }

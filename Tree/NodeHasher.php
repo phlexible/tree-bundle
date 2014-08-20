@@ -1,26 +1,23 @@
 <?php
 /**
- * MAKEweb
+ * phlexible
  *
- * PHP Version 5
- *
- * @category    MAKEweb
- * @package     Makeweb_Elements
- * @copyright   2007 brainbits GmbH (http://www.brainbits.net)
- * @version     SVN: $Id: Exception.php 4161 2008-03-11 18:37:34Z swentz $
+ * @copyright 2007-2013 brainbits GmbH (http://www.brainbits.net)
+ * @license   proprietary
  */
 
+namespace Phlexible\Bundle\TreeBundle\Tree;
+
+use Phlexible\Bundle\ElementBundle\Element\ElementHasher;
+
 /**
- * Makeweb System Elements Element Hash
+ * Node hasher
  *
- * @category    MAKEweb
- * @package     Makeweb_Elements
- * @author      Stephan Wentz <sw@brainbits.net>
- * @copyright   2007 brainbits GmbH (http://www.brainbits.net)
+ * @author Stephan Wentz <sw@brainbits.net>
  */
-class Makeweb_Elements_Tree_Node_Hash extends Makeweb_Elements_Element_Hash
+class NodeHasher extends ElementHasher
 {
-    public function getHashByTid($tid, $language, $version)
+    public function getHashByTreeId($tid, $language, $version)
     {
         $identifier = $tid . '__' . $language . '__' . $version;
 
@@ -57,7 +54,7 @@ class Makeweb_Elements_Tree_Node_Hash extends Makeweb_Elements_Element_Hash
         return $hash;
     }
 
-    public function getHashValuesByTid($tid, $language, $version)
+    public function getHashValuesByTreeId($tid, $language, $version)
     {
         $values = $this->_getHashValuesByTid($tid, $language, $version);
         $hash = $this->_createHashFromValues($values);
@@ -65,7 +62,7 @@ class Makeweb_Elements_Tree_Node_Hash extends Makeweb_Elements_Element_Hash
         return array('values' => $values, 'hash' => $hash);
     }
 
-    protected function _getHashValuesByTid($tid, $language, $version)
+    private function _getHashValuesByTid($tid, $language, $version)
     {
         $selectEid = $this->_db->select()
             ->from($this->_db->prefix . 'element_tree', array('eid'))

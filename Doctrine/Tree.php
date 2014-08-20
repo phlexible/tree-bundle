@@ -6,7 +6,7 @@
  * @license   proprietary
  */
 
-namespace Phlexible\Bundle\TreeBundle\Tree;
+namespace Phlexible\Bundle\TreeBundle\Doctrine;
 
 use Doctrine\DBAL\Connection;
 use Phlexible\Bundle\ElementBundle\Model\ElementHistoryManagerInterface;
@@ -14,8 +14,20 @@ use Phlexible\Bundle\TreeBundle\Event\MoveNodeEvent;
 use Phlexible\Bundle\TreeBundle\Event\NodeEvent;
 use Phlexible\Bundle\TreeBundle\Event\ReorderNodeEvent;
 use Phlexible\Bundle\TreeBundle\Exception\InvalidNodeMoveException;
-use Phlexible\Bundle\TreeBundle\Tree\Node\TreeNode;
-use Phlexible\Bundle\TreeBundle\Tree\Node\TreeNodeInterface;
+use Phlexible\Bundle\TreeBundle\Model\TreeIdentifier;
+use Phlexible\Bundle\TreeBundle\Model\TreeInterface;
+use Phlexible\Bundle\TreeBundle\Model\TreeNode;
+use Phlexible\Bundle\TreeBundle\Model\TreeNodeInterface;
+use Phlexible\Bundle\TreeBundle\Model\WritableTreeInterface;
+use Phlexible\Bundle\TreeBundle\Tree\Makeweb_Elements_Element_Identifier;
+use Phlexible\Bundle\TreeBundle\Tree\Makeweb_Elements_Tree_Exception;
+use Phlexible\Bundle\TreeBundle\Tree\Makeweb_Elements_Tree_Exception_LockException;
+use Phlexible\Bundle\TreeBundle\Tree\Makeweb_Elements_Tree_Node;
+use Phlexible\Bundle\TreeBundle\Tree\MWF_Core_Acl_Acl;
+use Phlexible\Bundle\TreeBundle\Tree\MWF_Core_Users_User_Peer;
+use Phlexible\Bundle\TreeBundle\Tree\MWF_Env;
+use Phlexible\Bundle\TreeBundle\Tree\MWF_Registry;
+use Phlexible\Bundle\TreeBundle\Tree\TreeIterator;
 use Phlexible\Bundle\TreeBundle\TreeEvents;
 use Phlexible\Component\Identifier\IdentifiableInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -25,7 +37,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
-class DatabaseTree implements TreeInterface, WritableTreeInterface, \IteratorAggregate, IdentifiableInterface
+class Tree implements TreeInterface, WritableTreeInterface, \IteratorAggregate, IdentifiableInterface
 {
     /**
      * @var string
@@ -334,77 +346,65 @@ class DatabaseTree implements TreeInterface, WritableTreeInterface, \IteratorAgg
     }
 
     /**
-     * @param TreeNodeInterface|int $node
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getLanguages($node)
+    public function isInstance($node)
     {
-        if ($node instanceof TreeNodeInterface) {
-            $nodeId = $node->getId();
-        } else {
-            $nodeId = $node;
+        if (!$node instanceof TreeNodeInterface) {
+            $node = $this->get($node);
         }
 
         $qb = $this->connection->createQueryBuilder();
         $qb
-            ->select('eto.language')
-            ->from('tree_online', 'eto')
-            ->where($qb->expr()->eq('eto.tree_id', $nodeId));
+            ->select('COUNT(t.id)')
+            ->from('tree', 't')
+            ->where($qb->expr()->eq('t.type_id', $node->getTypeId()));
 
-        $statement = $this->connection->executeQuery($qb->getSQL());
-
-        $languages = array();
-        while ($language = $statement->fetchColumn()) {
-            $languages[] = $language;
-        }
-
-        return $languages;
-    }
-
-    /**
-     * @param TreeNodeInterface|int $node
-     *
-     * @return array
-     */
-    public function getVersions($node)
-    {
-        if ($node instanceof TreeNodeInterface) {
-            $nodeId = $node->getId();
-        } else {
-            $nodeId = $node;
-        }
-
-        $qb = $this->connection->createQueryBuilder();
-        $qb
-            ->select(array('eto.language', 'eto.version'))
-            ->from('tree_online', 'eto')
-            ->where($qb->expr()->eq('eto.tree_id', $nodeId));
-
-        $statement = $this->connection->executeQuery($qb->getSQL());
-
-        $versions = array();
-        while ($row = $statement->fetch()) {
-            $versions[$row['language']] = (int) $row['version'];
-        }
-
-        return $versions;
-    }
-
-    /**
-     * @param TreeNodeInterface|int $node
-     * @param string                $language
-     *
-     * @return int
-     */
-    public function getVersion($node, $language)
-    {
-        return $this->getVersions($node)[$language];
+        return $this->connection->fetchColumn($qb->getSQL()) > 1;
     }
 
     /**
      * {@inheritdoc}
      */
+    public function isInstanceMaster($node)
+    {
+        return false;
+        if (!$node instanceof TreeNodeInterface) {
+            $node = $this->get($node);
+        }
+
+        $qb = $this->connection->createQueryBuilder();
+        $qb
+            ->select('COUNT(t.id)')
+            ->from('tree', 't')
+            ->where($qb->expr()->eq('t.type_id', $node->getTypeId()));
+
+        return $this->connection->fetchColumn($qb->getSQL()) > 1;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getInstances($node)
+    {
+        if (!$node instanceof TreeNodeInterface) {
+            $node = $this->get($node);
+        }
+
+        $qb = $this->connection->createQueryBuilder();
+        $qb
+            ->select('t.*')
+            ->from('tree', 't')
+            ->where($qb->expr()->eq('t.type_id', $node->getTypeId()));
+
+        $rows = $this->connection->fetchAll($qb->getSQL());
+
+        return $this->mapNodes($rows);
+    }
+
+/**
+ * {@inheritdoc}
+ */
     public function create(
         $parentNode,
         $afterNode = null,

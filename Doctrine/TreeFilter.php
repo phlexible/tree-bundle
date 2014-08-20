@@ -1,42 +1,34 @@
 <?php
 /**
- * MAKEweb
+ * phlexible
  *
- * PHP Version 5
- *
- * @category    MAKEweb
- * @package     Makeweb_Elements
- * @copyright   2007 brainbits GmbH (http://www.brainbits.net)
- * @version     SVN: $Id: Generator.php 2312 2007-01-25 18:46:27Z swentz $
+ * @copyright 2007-2013 brainbits GmbH (http://www.brainbits.net)
+ * @license   proprietary
  */
 
-namespace Phlexible\Bundle\TreeBundle\Tree;
+namespace Phlexible\Bundle\TreeBundle\Doctrine;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Phlexible\Bundle\TreeBundle\Event\TreeFilterEvent;
+use Phlexible\Bundle\TreeBundle\Model\TreeFilterInterface;
 use Phlexible\Bundle\TreeBundle\TreeEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 
-/**
- * Tree filter
- *
- * @author Stephan Wentz <sw@brainbits.net>
- */
-class TreeFilter
+class TreeFilter implements TreeFilterInterface
 {
     /**
      * @var Connection
      */
-    protected $connection = null;
+    private $connection;
 
     /**
      * @var EventDispatcherInterface
      */
-    private $dispatcher = null;
+    private $dispatcher;
 
     /**
      * @var array
@@ -99,17 +91,16 @@ class TreeFilter
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function reset()
     {
         $this->storage->clear();
     }
 
     /**
-     * Set filter values
-     *
-     * @param array $filterValues
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setFilterValues(array $filterValues)
     {
@@ -120,9 +111,7 @@ class TreeFilter
     }
 
     /**
-     * Return filter values
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getFilterValues()
     {
@@ -130,11 +119,7 @@ class TreeFilter
     }
 
     /**
-     * Set sort mode
-     *
-     * @param string $sortMode
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setSortMode($sortMode)
     {
@@ -145,22 +130,13 @@ class TreeFilter
     }
 
     /**
-     * Return sort mode
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getSortMode()
     {
         return $this->sortMode;
     }
 
-    /**
-     * Set sort dir
-     *
-     * @param string $sortDir
-     *
-     * @return $this
-     */
     public function setSortDir($sortDir)
     {
         $this->sortDir = $sortDir;
@@ -170,9 +146,7 @@ class TreeFilter
     }
 
     /**
-     * Return sort dir
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getSortDir()
     {
@@ -180,9 +154,7 @@ class TreeFilter
     }
 
     /**
-     * @param int $id
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getPager($id)
     {
@@ -211,7 +183,7 @@ class TreeFilter
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getCount()
     {
@@ -219,10 +191,7 @@ class TreeFilter
     }
 
     /**
-     * @param int $limit
-     * @param int $start
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getIds($limit = null, $start = null)
     {

@@ -6,10 +6,9 @@
  * @license   proprietary
  */
 
-namespace Phlexible\Bundle\TreeBundle\Tree\Node;
+namespace Phlexible\Bundle\TreeBundle\Model;
 
 use Phlexible\Bundle\AccessControlBundle\ContentObject\ContentObjectInterface;
-use Phlexible\Bundle\TreeBundle\Tree\TreeInterface;
 use Phlexible\Bundle\TreeBundle\Tree\TreeIterator;
 
 /**
@@ -325,35 +324,5 @@ class TreeNode implements TreeNodeInterface, \IteratorAggregate, ContentObjectIn
         $this->createUid = $createUid;
 
         return $this;
-    }
-
-    /**
-     * Return icon parameters
-     *
-     * @param string $language
-     *
-     * @return array
-     */
-    public function getIconParams($language)
-    {
-        if ($this->isRoot()) {
-            return array();
-        }
-
-        $status = '';
-        if ($this->isPublished($language)) {
-            $status = $this->isAsync($language) ? 'async': 'online';
-        }
-
-        $iconParams = array(
-            'status'   => $status,
-            'instance' => ($this->isInstance() ? ($this->isInstanceMaster() ? 'master' : 'slave') : false),
-        );
-
-        if ($this->getSortMode() !== Makeweb_Elements_Tree::SORT_MODE_FREE) {
-            $iconParams['sort'] = $this->getSortMode() . '_' . $this->getSortDir();
-        }
-
-        return $iconParams;
     }
 }

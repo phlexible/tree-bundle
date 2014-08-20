@@ -6,10 +6,7 @@
  * @license   proprietary
  */
 
-namespace Phlexible\Bundle\TreeBundle\Tree;
-
-use Phlexible\Bundle\TreeBundle\Exception\InvalidNodeMoveException;
-use Phlexible\Bundle\TreeBundle\Tree\Node\TreeNodeInterface;
+namespace Phlexible\Bundle\TreeBundle\Model;
 
 /**
  * Tree interface
@@ -130,4 +127,25 @@ interface TreeInterface
      * @return bool
      */
     public function isParentOf($parentNode, $childNode);
+
+    /**
+     * @param TreeNodeInterface|int $node
+     *
+     * @return bool
+     */
+    public function isInstance($node);
+
+    /**
+     * @param TreeNodeInterface|int $node
+     *
+     * @return bool
+     */
+    public function isInstanceMaster($node);
+
+    /**
+     * @param TreeNodeInterface|int $node
+     *
+     * @return TreeNodeInterface[]
+     */
+    public function getInstances($node);
 }

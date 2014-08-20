@@ -6,7 +6,7 @@
  * @license   proprietary
  */
 
-namespace Phlexible\Bundle\TreeBundle\Tree;
+namespace Phlexible\Bundle\TreeBundle\Model;
 
 /**
  * Database tree
