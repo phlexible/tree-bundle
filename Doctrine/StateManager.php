@@ -54,7 +54,7 @@ class StateManager implements StateManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function isPublished($node, $language)
+    public function isPublished(TreeNodeInterface $node, $language)
     {
         $publishedVersions = $this->getPublishedVersions($node);
 
@@ -64,7 +64,7 @@ class StateManager implements StateManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getPublishedLanguages($node)
+    public function getPublishedLanguages(TreeNodeInterface $node)
     {
         return array_keys($this->getPublishedVersions($node));
     }
@@ -72,19 +72,13 @@ class StateManager implements StateManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getPublishedVersions($node)
+    public function getPublishedVersions(TreeNodeInterface $node)
     {
-        if ($node instanceof TreeNodeInterface) {
-            $nodeId = $node->getId();
-        } else {
-            $nodeId = $node;
-        }
-
         $qb = $this->connection->createQueryBuilder();
         $qb
             ->select(array('t_o.language', 't_o.version'))
             ->from('tree_online', 't_o')
-            ->where($qb->expr()->eq('t_o.tree_id', $nodeId));
+            ->where($qb->expr()->eq('t_o.tree_id', $node->getId()));
 
         $statement = $this->connection->executeQuery($qb->getSQL());
 
@@ -99,7 +93,7 @@ class StateManager implements StateManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getPublishedVersion($node, $language)
+    public function getPublishedVersion(TreeNodeInterface $node, $language)
     {
         $publishedVersions = $this->getPublishedVersions($node);
         if (!isset($publishedVersions[$language])) {
@@ -112,19 +106,13 @@ class StateManager implements StateManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getPublishInfo($node, $language)
+    public function getPublishInfo(TreeNodeInterface $node, $language)
     {
-        if ($node instanceof TreeNodeInterface) {
-            $nodeId = $node->getId();
-        } else {
-            $nodeId = $node;
-        }
-
         $qb = $this->connection->createQueryBuilder();
         $qb
             ->select('t_o.*')
             ->from('tree_online', 't_o')
-            ->where($qb->expr()->eq('t_o.tree_id', $nodeId))
+            ->where($qb->expr()->eq('t_o.tree_id', $node->getId()))
             ->andWhere($qb->expr()->eq('t_o.language', $qb->expr()->literal($language)));
 
         return $this->connection->fetchAssoc($qb->getSQL());
@@ -133,13 +121,9 @@ class StateManager implements StateManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function isAsync($node, $language)
+    public function isAsync(TreeNodeInterface $node, $language)
     {
-        if ($node instanceof TreeNodeInterface) {
-            $nodeId = $node->getId();
-        } else {
-            $nodeId = $node;
-        }
+        // TODO: implement
 
         return true;
     }
