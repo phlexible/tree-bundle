@@ -10,6 +10,7 @@ namespace Phlexible\Bundle\TreeBundle\Mediator;
 
 use Phlexible\Bundle\ElementBundle\ElementService;
 use Phlexible\Bundle\ElementBundle\Entity\Element;
+use Phlexible\Bundle\ElementBundle\Entity\ElementVersion;
 use Phlexible\Bundle\TreeBundle\Model\TreeNodeInterface;
 
 /**
@@ -74,6 +75,20 @@ class Mediator implements MediatorInterface
     {
         if ($mediator = $this->findMediator($node)) {
             return $mediator->getObject($node);
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return ElementVersion
+     */
+    public function getVersionedObject(TreeNodeInterface $node)
+    {
+        if ($mediator = $this->findMediator($node)) {
+            return $mediator->getVersionedObject($node);
         }
 
         return null;

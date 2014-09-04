@@ -10,6 +10,7 @@ namespace Phlexible\Bundle\TreeBundle\Mediator;
 
 use Phlexible\Bundle\ElementBundle\ElementService;
 use Phlexible\Bundle\ElementBundle\Entity\Element;
+use Phlexible\Bundle\ElementBundle\Entity\ElementVersion;
 use Phlexible\Bundle\TreeBundle\Model\TreeNodeInterface;
 
 /**
@@ -45,8 +46,7 @@ class ElementMediator implements MediatorInterface
      */
     public function getTitle(TreeNodeInterface $node, $field, $language)
     {
-        $element = $this->getObject($node);
-        $elementVersion = $this->elementService->findLatestElementVersion($element);
+        $elementVersion = $this->getVersionedObject($node);
 
         return $elementVersion->getMappedField($field, $language);
     }
@@ -59,5 +59,15 @@ class ElementMediator implements MediatorInterface
     public function getObject(TreeNodeInterface $node)
     {
         return $this->elementService->findElement($node->getTypeId());
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return ElementVersion
+     */
+    public function getVersionedObject(TreeNodeInterface $node)
+    {
+        return $this->elementService->findLatestElementVersion($this->getObject($node));
     }
 }
