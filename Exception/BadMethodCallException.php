@@ -9,11 +9,11 @@
 namespace Phlexible\Bundle\TreeBundle\Exception;
 
 /**
- * Node not found exception
+ * Bad method call exception
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
-class NodeNotFoundException extends RuntimeException
+class BadMethodCallException extends \BadMethodCallException
 {
 
 }

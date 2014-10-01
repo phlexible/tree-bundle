@@ -9,11 +9,11 @@
 namespace Phlexible\Bundle\TreeBundle\Exception;
 
 /**
- * Lock exception
+ * No siteroot url found exception
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
-class LockException extends Exception
+class NoSiterootUrlFoundException extends RuntimeException
 {
 
 }

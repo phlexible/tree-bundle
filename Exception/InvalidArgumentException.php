@@ -9,11 +9,11 @@
 namespace Phlexible\Bundle\TreeBundle\Exception;
 
 /**
- * Base exception
+ * Invalid argument exception
  *
  * @author Stephan Wentz <sw@brainbits.net>
  */
-class Exception extends \Exception
+class InvalidArgumentException extends \InvalidArgumentException
 {
 
 }
